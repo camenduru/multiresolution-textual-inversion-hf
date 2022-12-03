@@ -1,0 +1,3 @@
+[submodule "multires_textual_inversion"]
+	path = multires_textual_inversion
+	url = https://github.com/giannisdaras/multires_textual_inversion
