@@ -21,7 +21,8 @@ Also, `number` should be an integer in [0, 9].
 '''
 FOOTER = '<img id="visitor-badge" src="https://visitor-badge.glitch.me/badge?page_id=hysts.multires-textual-inversion" alt="visitor badge" />'
 
-CACHE_EXAMPLES = os.getenv('SYSTEM') == 'spaces'
+#CACHE_EXAMPLES = os.getenv('SYSTEM') == 'spaces'
+CACHE_EXAMPLES = False
 
 
 def main():
