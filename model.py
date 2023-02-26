@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import shlex
 import subprocess
 import sys
 
@@ -10,7 +11,7 @@ from diffusers import DPMSolverMultistepScheduler
 
 if os.getenv('SYSTEM') == 'spaces':
     with open('patch') as f:
-        subprocess.run('patch -p1'.split(),
+        subprocess.run(shlex.split('patch -p1'),
                        cwd='multires_textual_inversion',
                        stdin=f)
 
@@ -18,7 +19,7 @@ sys.path.insert(0, 'multires_textual_inversion')
 
 from pipeline import MultiResPipeline, load_learned_concepts
 
-HF_TOKEN = os.environ.get('HF_TOKEN')
+HF_TOKEN = os.getenv('HF_TOKEN')
 
 
 class Model:
