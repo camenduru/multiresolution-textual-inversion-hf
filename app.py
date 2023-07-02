@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
+import os
+
 import gradio as gr
+import torch
 
 from model import Model
 
-DESCRIPTION = '''# Multiresolution Textual Inversion
-
-An unofficial demo for [https://github.com/giannisdaras/multires_textual_inversion](https://github.com/giannisdaras/multires_textual_inversion).
-'''
+DESCRIPTION = '# [Multiresolution Textual Inversion](https://github.com/giannisdaras/multires_textual_inversion)'
 
 DETAILS = '''
 - To run the Semi Resolution-Dependent sampler, use the format: `<jane(number)>`.
@@ -20,8 +20,8 @@ For this demo, only `<jane>`, `<gta5-artwork>` and `<cat-toy>` are available.
 Also, `number` should be an integer in [0, 9].
 '''
 
-#CACHE_EXAMPLES = os.getenv('SYSTEM') == 'spaces'
-CACHE_EXAMPLES = False
+CACHE_EXAMPLES = torch.cuda.is_available() and os.getenv(
+    'CACHE_EXAMPLES') == '1'
 
 model = Model()
 
@@ -33,24 +33,30 @@ with gr.Blocks(css='style.css') as demo:
             with gr.Row():
                 prompt = gr.Textbox(label='Prompt')
             with gr.Row():
-                num_images = gr.Slider(1,
-                                       9,
-                                       value=1,
-                                       step=1,
-                                       label='Number of images')
+                num_images = gr.Slider(
+                    label='Number of images',
+                    minimum=1,
+                    maximum=9,
+                    step=1,
+                    value=1,
+                )
             with gr.Row():
-                num_steps = gr.Slider(1,
-                                      50,
-                                      value=10,
+                num_steps = gr.Slider(label='Number of inference steps',
+                                      minimum=1,
+                                      maximum=50,
                                       step=1,
-                                      label='Number of inference steps')
+                                      value=10)
             with gr.Row():
-                seed = gr.Slider(0, 100000, value=100, step=1, label='Seed')
+                seed = gr.Slider(label='Seed',
+                                 minimum=0,
+                                 maximum=100000,
+                                 step=1,
+                                 value=100)
             with gr.Row():
                 run_button = gr.Button('Run')
 
         with gr.Column():
-            result = gr.Gallery(label='Result')
+            result = gr.Gallery(label='Result', object_fit='scale-down')
 
     with gr.Row():
         with gr.Group():
@@ -116,9 +122,10 @@ with gr.Blocks(css='style.css') as demo:
             fn=model.run,
             inputs=inputs,
             outputs=result,
+            api_name='run',
         )
 
     with gr.Accordion('About available prompts', open=False):
         gr.Markdown(DETAILS)
 
-demo.queue().launch(show_api=False)
+demo.queue(max_size=10).launch()
