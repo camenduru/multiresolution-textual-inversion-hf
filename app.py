@@ -117,6 +117,7 @@ with gr.Blocks(css='style.css') as demo:
             fn=model.run,
             inputs=inputs,
             outputs=result,
+            api_name=False,
         )
         run_button.click(
             fn=model.run,
