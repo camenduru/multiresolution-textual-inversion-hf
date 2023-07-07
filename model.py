@@ -19,8 +19,6 @@ sys.path.insert(0, 'multires_textual_inversion')
 
 from pipeline import MultiResPipeline, load_learned_concepts
 
-HF_TOKEN = os.getenv('HF_TOKEN')
-
 
 class Model:
     def __init__(self):
@@ -28,13 +26,11 @@ class Model:
             'cuda:0' if torch.cuda.is_available() else 'cpu')
         model_id = 'runwayml/stable-diffusion-v1-5'
         if self.device.type == 'cpu':
-            pipe = MultiResPipeline.from_pretrained(model_id,
-                                                    use_auth_token=HF_TOKEN)
+            pipe = MultiResPipeline.from_pretrained(model_id)
         else:
             pipe = MultiResPipeline.from_pretrained(model_id,
                                                     torch_dtype=torch.float16,
-                                                    revision='fp16',
-                                                    use_auth_token=HF_TOKEN)
+                                                    revision='fp16')
         self.pipe = pipe.to(self.device)
         self.pipe.scheduler = DPMSolverMultistepScheduler(
             beta_start=0.00085,
